@@ -1,15 +1,34 @@
-import 'package:blocks_solver/blocks_solver.dart';
+import 'dart:developer';
+import 'dart:io';
 import 'package:blocks_solver/grid.dart';
+import 'package:blocks_solver/json_decoder.dart';
 
 void main(List<String> arguments) async {
-  // print('Hello world: ${blocks_solver.calculate()}!');
+  /// decode the json file that contains the game's data (grid, and shapes...)
   var json = await readJsonFile(filePath: 'lib/example.json');
-  // print(json);
-  Grid grid = Grid(
-    rows: json['width'],
-    columns: json['width'],
-    grid: json['shape'],
-  );
 
-  grid.print();
+  /// the main grid that the shapes are going to be put on
+  Grid mainGrid = Grid(
+    rows: json['field']['width'],
+    columns: json['field']['width'],
+    grid: json['field']['shape'],
+  );
+  mainGrid.print(includeBars: false, includeDashes: false);
+  stdout.write('\n\n');
+
+  /// represents the shapes that are going to be put on the main grid
+  List<Grid> shapes = [];
+
+  for (var shape in json['pieces']) {
+    shapes.add(Grid.shape(grid: shape['blocks']));
+  }
+
+  for (var shape in shapes) {
+    shape.print(
+        // includeDashes: false,
+        // includeIndexes: false,
+        // includeBars: false,
+        );
+    stdout.write('\n\n');
+  }
 }
