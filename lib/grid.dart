@@ -34,14 +34,31 @@ class Grid {
     /// to store the indexes that are set in every shape
     Map<String, int> setIndexes = {};
 
+    /// a flag to decide whether the rows of the shape contains a negative index
+    bool rowContainsANegativeIndex = false;
+
+    /// a flag to decide whether the columns of the shape contains a negative index
+    bool columnContainsANegativeIndex = false;
+
+    for (var pair in grid) {
+      rowContainsANegativeIndex = rowContainsANegativeIndex || pair[0] < 0;
+      columnContainsANegativeIndex =
+          columnContainsANegativeIndex || pair[1] < 0;
+    }
+
     for (var pair in grid) {
       rows = math.max(rows, pair[0]);
       columns = math.max(columns, pair[1]);
+
+      // if the shape contains a negative index, then we should offset the indexes accordingly
+      pair[0] += rowContainsANegativeIndex ? 1 : 0;
+      pair[1] += columnContainsANegativeIndex ? 1 : 0;
+
       setIndexes[pair.toString()] = 1;
     }
 
-    this.rows = rows + 1;
-    this.columns = columns + 1;
+    this.rows = rows + 1 + (rowContainsANegativeIndex ? 1 : 0);
+    this.columns = columns + 1 + (columnContainsANegativeIndex ? 1 : 0);
 
     this.grid = List.generate(
       this.rows,
