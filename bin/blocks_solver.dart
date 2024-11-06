@@ -22,8 +22,9 @@ void main(List<String> arguments) async {
     shapes.add(Grid.shape(grid: shape['blocks']));
   }
 
-  for (var shape in shapes) {
-    shape.print(
+  for (int i = 0; i < shapes.length; i++) {
+    stdout.write('shape index: $i\n');
+    shapes[i].print(
         // includeDashes: false,
         // includeIndexes: false,
         // includeBars: false,

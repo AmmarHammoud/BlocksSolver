@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'dart:math' as math;
+import 'package:blocks_solver/cell.dart';
+import 'package:blocks_solver/cell_states.dart';
+import 'package:blocks_solver/colored_circles.dart';
+
 import 'constants.dart';
 
 class Grid {
@@ -21,7 +25,26 @@ class Grid {
     required this.columns,
     required this.grid,
     this.enableLogging = false,
-  });
+  }) {
+    grid = List.generate(
+      rows,
+          (rIndex) =>
+          List.generate(
+            columns,
+                (cIndex) {
+              bool cellIsAvailable = grid[rIndex][cIndex] == 2;
+              return Cell(
+                value: cellIsAvailable
+                    ? CellStates.notAvailable
+                    : CellStates.empty,
+                coloredCircle: cellIsAvailable
+                    ? ColoredCircles.black
+                    : ColoredCircles.white,
+              );
+            },
+          ),
+    );
+  }
 
   /// to construct a shape
   Grid.shape({required dynamic grid, this.enableLogging = false}) {
@@ -32,7 +55,7 @@ class Grid {
     int columns = 0;
 
     /// to store the indexes that are set in every shape
-    Map<String, int> setIndexes = {};
+    Map<String, CellStates> setIndexes = {};
 
     /// a flag to decide whether the rows of the shape contains a negative index
     bool rowContainsANegativeIndex = false;
@@ -54,7 +77,7 @@ class Grid {
       pair[0] += rowContainsANegativeIndex ? 1 : 0;
       pair[1] += columnContainsANegativeIndex ? 1 : 0;
 
-      setIndexes[pair.toString()] = 1;
+      setIndexes[pair.toString()] = CellStates.taken;
     }
 
     this.rows = rows + 1 + (rowContainsANegativeIndex ? 1 : 0);
@@ -62,10 +85,18 @@ class Grid {
 
     this.grid = List.generate(
       this.rows,
-      (rIndex) => List.generate(
-        this.columns,
-        (cIndex) => setIndexes['[$rIndex, $cIndex]'] ?? 0,
-      ),
+          (rIndex) =>
+          List.generate(
+            this.columns,
+                (cIndex) {
+              var currentIndexSet = setIndexes['[$rIndex, $cIndex]'];
+              return Cell(
+                  value: currentIndexSet ?? CellStates.notAvailable,
+                  coloredCircle: currentIndexSet != null
+                      ? ColoredCircles.green
+                      : ColoredCircles.black);
+            },
+          ),
     );
 
     if (!enableLogging) return;
@@ -89,7 +120,7 @@ class Grid {
   /// to print the dashes that separate between rows
   _printDashes({bool includeIndexes = true}) {
     if (includeIndexes) stdout.write('    ');
-    for (int i = 0; i < columns * (includeIndexes ? 2.25 : 1.0); i++) {
+    for (int i = 0; i < columns * (includeIndexes ? 2.5 : 2.1); i++) {
       stdout.write('___');
     }
   }
@@ -98,7 +129,7 @@ class Grid {
   _printColumnsNumbers() {
     printYellow('   |  ');
     for (int i = 0; i < columns; i++) {
-      printYellow('0${i.toString()}  |  ');
+      printYellow('0${i.toString()}   |  ');
     }
   }
 
@@ -107,16 +138,13 @@ class Grid {
   }
 
   /// to print a colored cell
-  _printCell(
-    int c, {
+  _printCell(Cell c, {
     bool includeBars = true,
     bool includeIndexes = true,
   }) {
-    if (c == 0) {
-      includeIndexes ? stdout.write('⚪   ') : stdout.write('⚪ ');
-    } else {
-      includeIndexes ? stdout.write('🟢  ') : stdout.write('🟢');
-    }
+    includeIndexes
+        ? stdout.write('${c.coloredCircle.circle}   ')
+        : stdout.write('${c.coloredCircle.circle}  ');
     if (includeBars) {
       includeIndexes ? stdout.write('|  ') : stdout.write(' | ');
     } else {
