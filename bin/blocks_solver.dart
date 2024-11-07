@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:blocks_solver/grid.dart';
 import 'package:blocks_solver/json_decoder.dart';
+import 'package:blocks_solver/user_interaction.dart';
 
 void main(List<String> arguments) async {
   /// decode the json file that contains the game's data (grid, and shapes...)
@@ -22,13 +23,16 @@ void main(List<String> arguments) async {
     shapes.add(Grid.shape(grid: shape['blocks']));
   }
 
-  for (int i = 0; i < shapes.length; i++) {
-    stdout.write('shape index: $i\n');
-    shapes[i].print(
-        // includeDashes: false,
-        // includeIndexes: false,
-        // includeBars: false,
-        );
-    stdout.write('\n\n');
+  // shapes[1].print();
+  // stdout.write('\n');
+  // mainGrid.fillWithShape(shape: shapes[1], row: 1, column: 4);
+
+  while (true) {
+    UserInteraction.printWelcomingMessage();
+    UserInteraction.printUserOptions();
+    UserInteraction.readUserInput();
+    var c =
+        UserInteraction.executeUserOption(mainGrid: mainGrid, shapes: shapes);
+    if (c != null && !c) return;
   }
 }

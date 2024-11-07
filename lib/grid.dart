@@ -19,6 +19,9 @@ class Grid {
   /// represents the grid
   late List<dynamic> grid;
 
+  /// to store the indexes that are set in every shape
+  Map<String, CellStates> setIndexes = {};
+
   /// to construct the main grid
   Grid({
     required this.rows,
@@ -28,21 +31,17 @@ class Grid {
   }) {
     grid = List.generate(
       rows,
-          (rIndex) =>
-          List.generate(
-            columns,
-                (cIndex) {
-              bool cellIsAvailable = grid[rIndex][cIndex] == 2;
-              return Cell(
-                value: cellIsAvailable
-                    ? CellStates.notAvailable
-                    : CellStates.empty,
-                coloredCircle: cellIsAvailable
-                    ? ColoredCircles.black
-                    : ColoredCircles.white,
-              );
-            },
-          ),
+      (rIndex) => List.generate(
+        columns,
+        (cIndex) {
+          bool cellIsAvailable = grid[rIndex][cIndex] == 2;
+          return Cell(
+            value: cellIsAvailable ? CellStates.notAvailable : CellStates.empty,
+            coloredCircle:
+                cellIsAvailable ? ColoredCircles.black : ColoredCircles.white,
+          );
+        },
+      ),
     );
   }
 
@@ -54,9 +53,6 @@ class Grid {
     /// represents the number of shape's columns
     int columns = 0;
 
-    /// to store the indexes that are set in every shape
-    Map<String, CellStates> setIndexes = {};
-
     /// a flag to decide whether the rows of the shape contains a negative index
     bool rowContainsANegativeIndex = false;
 
@@ -64,18 +60,18 @@ class Grid {
     bool columnContainsANegativeIndex = false;
 
     for (var pair in grid) {
-      rowContainsANegativeIndex = rowContainsANegativeIndex || pair[0] < 0;
+      rowContainsANegativeIndex = rowContainsANegativeIndex || pair[1] < 0;
       columnContainsANegativeIndex =
-          columnContainsANegativeIndex || pair[1] < 0;
+          columnContainsANegativeIndex || pair[0] < 0;
     }
 
     for (var pair in grid) {
-      rows = math.max(rows, pair[0]);
-      columns = math.max(columns, pair[1]);
+      rows = math.max(rows, pair[1]);
+      columns = math.max(columns, pair[0]);
 
       // if the shape contains a negative index, then we should offset the indexes accordingly
-      pair[0] += rowContainsANegativeIndex ? 1 : 0;
-      pair[1] += columnContainsANegativeIndex ? 1 : 0;
+      pair[1] += rowContainsANegativeIndex ? 1 : 0;
+      pair[0] += columnContainsANegativeIndex ? 1 : 0;
 
       setIndexes[pair.toString()] = CellStates.taken;
     }
@@ -85,18 +81,17 @@ class Grid {
 
     this.grid = List.generate(
       this.rows,
-          (rIndex) =>
-          List.generate(
-            this.columns,
-                (cIndex) {
-              var currentIndexSet = setIndexes['[$rIndex, $cIndex]'];
-              return Cell(
-                  value: currentIndexSet ?? CellStates.notAvailable,
-                  coloredCircle: currentIndexSet != null
-                      ? ColoredCircles.green
-                      : ColoredCircles.black);
-            },
-          ),
+      (rIndex) => List.generate(
+        this.columns,
+        (cIndex) {
+          var currentIndexSet = setIndexes['[$cIndex, $rIndex]'];
+          return Cell(
+              value: currentIndexSet ?? CellStates.notAvailable,
+              coloredCircle: currentIndexSet != null
+                  ? ColoredCircles.green
+                  : ColoredCircles.black);
+        },
+      ),
     );
 
     if (!enableLogging) return;
@@ -138,7 +133,8 @@ class Grid {
   }
 
   /// to print a colored cell
-  _printCell(Cell c, {
+  _printCell(
+    Cell c, {
     bool includeBars = true,
     bool includeIndexes = true,
   }) {
@@ -173,6 +169,37 @@ class Grid {
       stdout.write('\n');
     }
     if (includeDashes) _printDashes(includeIndexes: includeIndexes);
+  }
+
+  /// to fill a part of the grid (given by row and column) with a given shape
+  void fillWithShape({
+    required Grid shape,
+    required int row,
+    required int column,
+  }) {
+    bool availablePosition = true;
+    stdout.write('the entries: ${shape.setIndexes.entries.length}');
+    for (var pair in shape.setIndexes.entries) {
+      int i = int.parse(pair.key[4]);
+      int j = int.parse(pair.key[1]);
+      // stdout.write('the key pair: {i = ${pair.key[4]}, j = ${pair.key[1]}}\n');
+      availablePosition = availablePosition &&
+          grid[row + i][column + j].value == CellStates.empty;
+    }
+
+    if (!availablePosition) {
+      stdout.write('this positions {$row, $column} is not available to fill with this shape\n');
+      return;
+    }
+
+    for (var pair in shape.setIndexes.entries) {
+      int i = int.parse(pair.key[4]);
+      int j = int.parse(pair.key[1]);
+      grid[row + i][column + j] = shape.grid[i][j];
+      grid[row + i][column + j].value = CellStates.taken;
+    }
+    print(includeDashes: false, includeBars: false);
+    stdout.write('\n');
   }
 
   /// <---------- TODO ---------->
