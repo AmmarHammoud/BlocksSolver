@@ -1,7 +1,7 @@
 import 'package:blocks_solver/grid.dart';
 
-class Status {
+class State {
   late Grid grid;
 
-  Status({required this.grid});
+  State({required this.grid});
 }
