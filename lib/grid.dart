@@ -34,11 +34,13 @@ class Grid {
       (rIndex) => List.generate(
         columns,
         (cIndex) {
-          bool cellIsAvailable = grid[rIndex][cIndex] == 2;
+          bool cellIsNotAvailable = grid[rIndex][cIndex] == 2;
           return Cell(
-            value: cellIsAvailable ? CellStates.notAvailable : CellStates.empty,
-            coloredCircle:
-                cellIsAvailable ? ColoredCircles.black : ColoredCircles.white,
+            value:
+                cellIsNotAvailable ? CellStates.notAvailable : CellStates.empty,
+            coloredCircle: cellIsNotAvailable
+                ? ColoredCircles.black
+                : ColoredCircles.white,
           );
         },
       ),
@@ -178,7 +180,7 @@ class Grid {
     required int column,
   }) {
     bool availablePosition = true;
-    stdout.write('the entries: ${shape.setIndexes.entries.length}');
+    // stdout.write('the entries: ${shape.setIndexes.entries.length}');
     for (var pair in shape.setIndexes.entries) {
       int i = int.parse(pair.key[4]);
       int j = int.parse(pair.key[1]);
@@ -188,7 +190,8 @@ class Grid {
     }
 
     if (!availablePosition) {
-      stdout.write('this positions {$row, $column} is not available to fill with this shape\n');
+      stdout.write(
+          'this positions {$row, $column} is not available to fill with this shape\n');
       return;
     }
 
@@ -198,6 +201,39 @@ class Grid {
       grid[row + i][column + j] = shape.grid[i][j];
       grid[row + i][column + j].value = CellStates.taken;
     }
+    print(includeDashes: false, includeBars: false);
+    stdout.write('\n');
+  }
+
+  /// to delete a shape from the grid
+  void deleteShape({
+    required Grid shape,
+    required int row,
+    required int column,
+  }) {
+    // bool isNotTaken = false;
+    //
+    // for (var pair in shape.setIndexes.entries) {
+    //   int i = int.parse(pair.key[4]);
+    //   int j = int.parse(pair.key[1]);
+    //   isNotTaken = isNotTaken ||
+    //       grid[row + i][column + j].value == CellStates.empty;
+    // }
+    //
+    // if(isNotTaken){
+    //   printYellow('this shape is already ');
+    // }
+    // stdout.write('the key pair: {i = [1]}}\n');
+    for (var pair in shape.setIndexes.entries) {
+      int i = int.parse(pair.key[4]);
+      int j = int.parse(pair.key[1]);
+      grid[row + i][column + j] = shape.grid[i][j];
+      grid[row + i][column + j] = Cell(
+        value: CellStates.empty,
+        coloredCircle: ColoredCircles.white,
+      );
+    }
+    // _logGrid(grid: grid);
     print(includeDashes: false, includeBars: false);
     stdout.write('\n');
   }
