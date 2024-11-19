@@ -259,4 +259,9 @@ class Grid {
   /// <---------- TODO ---------->
   /// to log the shapes side by side
   static void printShapesSideBySide({required List<Grid> shapes}) {}
+
+  @override
+  String toString() {
+    return grid.toString();
+  }
 }

@@ -39,7 +39,10 @@ void main(List<String> arguments) async {
   }
 
   /// implementing DFS algorithm on the grid
-  Algorithms.dfs(mainGrid, shapes, {});
+  // Algorithms.dfs(mainGrid, shapes, {});
+
+  /// implementing BFS algorithm on the grid
+  Algorithms.bfs(mainGrid, shapes);
 
   // while (true) {
   //   UserInteraction.printWelcomingMessage();
