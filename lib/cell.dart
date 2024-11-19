@@ -12,6 +12,6 @@ class Cell {
 
   @override
   String toString() {
-    return 'value: ${value.value}, color: ${coloredCircle.circle}';
+    return '${value.value}';
   }
 }

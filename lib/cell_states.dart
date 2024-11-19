@@ -6,7 +6,7 @@ enum CellStates {
   int get value {
     switch (this) {
       case CellStates.notAvailable:
-        return -1;
+        return 2;
       case CellStates.empty:
         return 0;
       case CellStates.taken:
