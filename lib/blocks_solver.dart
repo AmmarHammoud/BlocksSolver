@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
 import 'package:blocks_solver/grid.dart';
+import 'package:collection/collection.dart';
 
 abstract class Algorithms {
   /// to hold the nodes that represent the path
@@ -11,6 +12,9 @@ abstract class Algorithms {
 
   /// to hold the number of BFS algorithm states
   static int bfsStatesCount = 0;
+
+  /// to hold the number of USC algorithm states
+  static int uscStatesCount = 0;
 
   /// to generate all the neighbor states
   /// it tries to put every shape in every index [i, j] for the current state
@@ -53,7 +57,7 @@ abstract class Algorithms {
     List<Grid> shapes,
     Set<String> visitedGrids,
   ) {
-    String gridUnique = startGrid.grid.toString();
+    String gridUnique = startGrid.toString();
     if (visitedGrids.contains(gridUnique)) return;
 
     visitedGrids.add(gridUnique);
@@ -75,7 +79,7 @@ abstract class Algorithms {
   static void bfs(Grid startGrid, List<Grid> shapes) {
     Stopwatch stopwatch = Stopwatch()..start();
     _bfs(startGrid, shapes);
-    stdout.write('dfs executed in ${stopwatch.elapsed}\n');
+    stdout.write('bfs executed in ${stopwatch.elapsed}\n');
     stdout.write('all possible states $bfsStatesCount\n');
   }
 
@@ -97,6 +101,42 @@ abstract class Algorithms {
         if (!visited.contains(neighbor.toString())) {
           visited.add(neighbor.toString());
           queue.add(neighbor);
+        }
+      }
+    }
+  }
+
+  static void usc(Grid startGrid, List<Grid> shapes) {
+    Stopwatch stopwatch = Stopwatch()..start();
+    _usc(startGrid, shapes);
+    stdout.write('usc executed in ${stopwatch.elapsed}\n');
+    stdout.write('usc states count: $uscStatesCount\n');
+  }
+
+  static void _usc(Grid startGrid, List<Grid> shapes) {
+    final Map<String, int> visited = {};
+    PriorityQueue<MapEntry<Grid, int>> queue =
+        PriorityQueue((a, b) => a.value.compareTo(b.value));
+    visited[startGrid.toString()] = 0;
+    queue.add(MapEntry(startGrid, 0));
+
+    while (queue.isNotEmpty) {
+      var current = queue.removeFirst();
+      uscStatesCount++;
+
+      var currentGrid = current.key;
+      var currentCost = current.value;
+
+      var neighbors = generateNeighbors(startGrid, shapes);
+
+      for (var neighbor in neighbors) {
+        var neighborStr = neighbor.toString();
+        int newCost = currentCost + 1;
+
+        if (!visited.containsKey(neighborStr) ||
+            newCost < visited[neighborStr]!) {
+          visited[neighborStr] = newCost;
+          queue.add(MapEntry(neighbor, newCost));
         }
       }
     }

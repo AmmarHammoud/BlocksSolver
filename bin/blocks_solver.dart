@@ -6,6 +6,7 @@ import 'package:blocks_solver/json_decoder.dart';
 import 'package:blocks_solver/user_interaction.dart';
 
 void main(List<String> arguments) async {
+
   /// decode the json file that contains the game's data (grid, and shapes...)
   var json = await readJsonFile(filePath: 'lib/example_2.json');
 
@@ -17,6 +18,7 @@ void main(List<String> arguments) async {
   );
   // mainGrid.print(includeBars: false, includeDashes: false);
   // stdout.write('\n\n');
+  // stdout.write(mainGrid.toString());
 
   /// represents the shapes that are going to be put on the main grid
   List<Grid> shapes = [];
@@ -38,11 +40,19 @@ void main(List<String> arguments) async {
         grid: shape['blocks'], color: colors[(colors.length - 1) % i++]));
   }
 
+  // var startGridNeighbors = Algorithms.generateNeighbors(mainGrid, shapes);
+  // for(var neighbor in startGridNeighbors){
+  //   neighbor.print();
+  // }
+
   /// implementing DFS algorithm on the grid
   // Algorithms.dfs(mainGrid, shapes, {});
 
   /// implementing BFS algorithm on the grid
-  Algorithms.bfs(mainGrid, shapes);
+  // Algorithms.bfs(mainGrid, shapes);
+
+  /// implementing USC algorithm on the grid
+  Algorithms.usc(mainGrid, shapes);
 
   // while (true) {
   //   UserInteraction.printWelcomingMessage();
