@@ -28,12 +28,16 @@ class Grid {
   /// to store the number of taken cells
   late int takenCells;
 
+  /// to store the first shape used in a grid in order not to use it again
+  String? firstShape;
+
   /// to construct the main grid
   Grid({
     required this.rows,
     required this.columns,
     required this.grid,
     this.takenCells = 0,
+    this.firstShape,
     ColoredCircles color = ColoredCircles.green,
     this.enableLogging = false,
   }) {

@@ -6,7 +6,6 @@ import 'package:blocks_solver/json_decoder.dart';
 import 'package:blocks_solver/user_interaction.dart';
 
 void main(List<String> arguments) async {
-
   /// decode the json file that contains the game's data (grid, and shapes...)
   var json = await readJsonFile(filePath: 'lib/example_2.json');
 
@@ -46,13 +45,19 @@ void main(List<String> arguments) async {
   // }
 
   /// implementing DFS algorithm on the grid
-  // Algorithms.dfs(mainGrid, shapes, {});
+  // Algorithms.dfs(mainGrid, shapes);
 
   /// implementing BFS algorithm on the grid
   // Algorithms.bfs(mainGrid, shapes);
 
   /// implementing USC algorithm on the grid
   Algorithms.usc(mainGrid, shapes);
+
+  /// implementing A* algorithm on the grid
+  // Algorithms.aStart(mainGrid, shapes);
+
+  /// implementing Hell Climbing algorithm on the gird
+  // Algorithms.hellClimbing(mainGrid, shapes);
 
   // while (true) {
   //   UserInteraction.printWelcomingMessage();
