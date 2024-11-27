@@ -51,7 +51,7 @@ void main(List<String> arguments) async {
   // Algorithms.bfs(mainGrid, shapes);
 
   /// implementing USC algorithm on the grid
-  Algorithms.usc(mainGrid, shapes);
+  // Algorithms.usc(mainGrid, shapes);
 
   /// implementing A* algorithm on the grid
   // Algorithms.aStart(mainGrid, shapes);

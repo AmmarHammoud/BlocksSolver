@@ -30,8 +30,8 @@ abstract class Algorithms {
     for (int k = 0; k < shapes.length; k++) {
       if (grid.firstShape != null && grid.firstShape == shapes[k].toString())
         continue;
-      for (int i = 0; i < grid.rows; i++) {
-        for (int j = 0; j < grid.columns; j++) {
+      for (int i = grid.rows - 1; i >= 0; i--) {
+        for (int j = grid.columns - 1; j >= 0; j--) {
           Grid newGrid = Grid(
             rows: grid.rows,
             columns: grid.columns,
@@ -158,6 +158,8 @@ abstract class Algorithms {
     var goalGrid =
         Grid(rows: startGrid.rows, columns: startGrid.columns, grid: goalList);
 
+    // stdout.write('h between start and goal: ${heuristic(startGrid, goalGrid)}\n');
+
     _aStar(startGrid, goalGrid, shapes);
   }
 
@@ -203,11 +205,13 @@ abstract class Algorithms {
       State current = openSet.removeFirst();
       String gridUnique = current.grid.toString();
 
-      if (gridUnique == goalGrid.toString()) {
+      if (current.grid.filledCells() == current.grid.rows * current.grid.columns) {
         stdout.write('found a solution\n');
         current.grid.print();
         return;
       }
+
+      // current.grid.print();
 
       visitedGrids.add(gridUnique);
 
@@ -237,17 +241,16 @@ abstract class Algorithms {
   }
 
   static int heuristic(Grid current, Grid goal) {
-    // Implement your heuristic function here.
-    // For example, using Manhattan distance.
-    // int distance = 0;
-    // for (int i = 0; i < current.rows; i++) {
-    //   for (int j = 0; j < current.columns; j++) {
-    //     if (current.grid[i][j].value != goal.grid[i][j].value) {
-    //       distance++;
-    //     }
-    //   }
-    // }
-    return 1;
+    int h = 0;
+    for (int i = 0; i < current.rows; i++) {
+      h += current.grid[i][0] == 1 ? 1 : 0;
+      h += current.grid[i][current.columns - 1] == 1 ? 1 : 0;
+    }
+    for (int j = 0; j < current.columns; j++) {
+      h += current.grid[0][j] == 1 ? 1 : 0;
+      h += current.grid[current.rows - 1][j] == 1 ? 1 : 0;
+    }
+    return h;
   }
 
   static void hellClimbing(Grid startGrid, List<Grid> shapes) {
@@ -284,7 +287,9 @@ abstract class Algorithms {
           rows: bestNeighbor.rows,
           columns: bestNeighbor.columns,
           grid: bestNeighbor.grid,
+          firstShape: bestNeighbor.firstShape,
           takenCells: bestNeighbor.filledCells());
+      x0.print();
     }
   }
 }
